@@ -1,6 +1,6 @@
 package com.example.price.scheduler;
 
-import com.example.price.client.BinanceApiException;
+import com.example.price.exception.BinanceApiException;
 import com.example.price.domain.PriceRecord;
 import com.example.price.service.PriceIngestionService;
 import org.slf4j.Logger;

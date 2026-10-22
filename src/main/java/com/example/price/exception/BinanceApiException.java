@@ -1,4 +1,4 @@
-package com.example.price.client;
+package com.example.price.exception;
 
 /**
  * Signals that a Binance API call failed (HTTP error, I/O problem or an unreadable response).

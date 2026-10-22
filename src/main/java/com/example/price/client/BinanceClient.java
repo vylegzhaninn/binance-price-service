@@ -1,6 +1,7 @@
 package com.example.price.client;
 
 import com.example.price.client.dto.BinanceAvgPrice;
+import com.example.price.exception.BinanceApiException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;

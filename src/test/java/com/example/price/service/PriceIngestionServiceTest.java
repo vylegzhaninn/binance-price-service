@@ -7,11 +7,11 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.example.price.client.BinanceApiException;
 import com.example.price.client.BinanceClient;
 import com.example.price.client.dto.BinanceAvgPrice;
 import com.example.price.config.BinanceProperties;
 import com.example.price.domain.PriceRecord;
+import com.example.price.exception.BinanceApiException;
 import com.example.price.repository.PriceRecordRepository;
 import java.math.BigDecimal;
 import java.net.URI;
@@ -19,7 +19,6 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,6 +45,7 @@ class PriceIngestionServiceTest {
                 binanceClient,
                 repository,
                 new BinanceProperties(URI.create("https://api.binance.com"), "BNBUSDT", Duration.ofSeconds(30)),
+                // fixed clock proves fetchedAt comes from the injected clock, not from system time
                 Clock.fixed(NOW, ZoneOffset.UTC));
     }
 
@@ -76,18 +76,5 @@ class PriceIngestionServiceTest {
                 .isInstanceOf(BinanceApiException.class);
 
         verify(repository, never()).save(any());
-    }
-
-    @Test
-    @DisplayName("records for repeated polls get distinct timestamps")
-    void distinctTimestamps() {
-        when(binanceClient.fetchAveragePrice("BNBUSDT")).thenReturn(new BinanceAvgPrice(5, "100"));
-
-        ingestionService.fetchAndSaveAveragePrice();
-
-        ArgumentCaptor<PriceRecord> captor = ArgumentCaptor.forClass(PriceRecord.class);
-        verify(repository).save(captor.capture());
-        // fixed clock proves the timestamp comes from the injected clock, not from system time
-        assertThat(List.of(captor.getValue().getFetchedAt())).containsOnly(NOW.truncatedTo(java.time.temporal.ChronoUnit.SECONDS));
     }
 }

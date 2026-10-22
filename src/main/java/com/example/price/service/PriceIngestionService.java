@@ -25,10 +25,12 @@ public class PriceIngestionService {
     private final BinanceProperties properties;
     private final Clock clock;
 
-    public PriceIngestionService(BinanceClient binanceClient,
-                                 PriceRecordRepository repository,
-                                 BinanceProperties properties,
-                                 Clock clock) {
+    public PriceIngestionService(
+            BinanceClient binanceClient,
+            PriceRecordRepository repository,
+            BinanceProperties properties,
+            Clock clock
+    ) {
         this.binanceClient = binanceClient;
         this.repository = repository;
         this.properties = properties;

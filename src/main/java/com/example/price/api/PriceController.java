@@ -50,7 +50,8 @@ public class PriceController {
     @GetMapping("/latest")
     public PriceResponse latest(
             @Parameter(description = "Торговая пара; по умолчанию — настроенный символ сервиса")
-            @RequestParam(required = false) String symbol) {
+            @RequestParam(required = false) String symbol
+    ) {
         return PriceResponse.from(priceQueryService.latestPrice(resolveSymbol(symbol)));
     }
 
@@ -63,9 +64,9 @@ public class PriceController {
             @Parameter(description = "Конец периода (включительно), ISO-8601", required = true)
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime to,
             @Parameter(description = "Торговая пара; по умолчанию — настроенный символ сервиса")
-            @RequestParam(required = false) String symbol) {
-        TimePeriod period = TimePeriod.of(from.toInstant(), to.toInstant());
-        return AveragePriceResponse.of(priceQueryService.averagePrice(resolveSymbol(symbol), period));
+            @RequestParam(required = false) String symbol
+    ) {
+        return AveragePriceResponse.of(priceQueryService.averagePrice(resolveSymbol(symbol), toPeriod(from, to)));
     }
 
     /** Stored records inside [from, to] with pagination, newest first. */
@@ -81,11 +82,11 @@ public class PriceController {
             @Parameter(description = "Размер страницы (1..100)", example = "20")
             @RequestParam(defaultValue = "20") @Min(1) @Max(MAX_PAGE_SIZE) int size,
             @Parameter(description = "Торговая пара; по умолчанию — настроенный символ сервиса")
-            @RequestParam(required = false) String symbol) {
-        TimePeriod period = TimePeriod.of(from.toInstant(), to.toInstant());
+            @RequestParam(required = false) String symbol
+    ) {
         Pageable pageable = PageRequest.of(page, size);
         return PageResponse.from(priceQueryService
-                .priceHistory(resolveSymbol(symbol), period, pageable)
+                .priceHistory(resolveSymbol(symbol), toPeriod(from, to), pageable)
                 .map(PriceResponse::from));
     }
 
@@ -99,15 +100,19 @@ public class PriceController {
             @Parameter(description = "Конец периода (включительно), ISO-8601", required = true)
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime to,
             @Parameter(description = "Торговая пара; по умолчанию — настроенный символ сервиса")
-            @RequestParam(required = false) String symbol) {
-        TimePeriod period = TimePeriod.of(from.toInstant(), to.toInstant());
+            @RequestParam(required = false) String symbol
+    ) {
         String resolvedSymbol = resolveSymbol(symbol);
-        TrendType trend = priceQueryService.priceTrend(resolvedSymbol, period);
+        TrendType trend = priceQueryService.priceTrend(resolvedSymbol, toPeriod(from, to));
         return new TrendResponse(
                 resolvedSymbol,
                 from.withOffsetSameInstant(ZoneOffset.UTC).toLocalDate(),
                 to.withOffsetSameInstant(ZoneOffset.UTC).toLocalDate(),
                 trend);
+    }
+
+    private static TimePeriod toPeriod(OffsetDateTime from, OffsetDateTime to) {
+        return TimePeriod.of(from.toInstant(), to.toInstant());
     }
 
     private String resolveSymbol(String requested) {

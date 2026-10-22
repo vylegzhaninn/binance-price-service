@@ -42,13 +42,21 @@ public class PriceQueryService {
     }
 
     public TrendType priceTrend(String symbol, TimePeriod period) {
-        PriceRecord first = repository.findFirstBySymbolAndFetchedAtBetweenOrderByFetchedAtAscIdAsc(
-                        symbol, period.from(), period.to())
-                .orElseThrow(() -> notFound(symbol, period));
-        PriceRecord last = repository.findFirstBySymbolAndFetchedAtBetweenOrderByFetchedAtDescIdDesc(
-                        symbol, period.from(), period.to())
-                .orElseThrow(() -> notFound(symbol, period));
+        PriceRecord first = firstInPeriod(symbol, period);
+        PriceRecord last = lastInPeriod(symbol, period);
         return trendCalculator.calculate(first.getPrice(), last.getPrice());
+    }
+
+    private PriceRecord firstInPeriod(String symbol, TimePeriod period) {
+        return repository.findFirstBySymbolAndFetchedAtBetweenOrderByFetchedAtAscIdAsc(
+                        symbol, period.from(), period.to())
+                .orElseThrow(() -> notFound(symbol, period));
+    }
+
+    private PriceRecord lastInPeriod(String symbol, TimePeriod period) {
+        return repository.findFirstBySymbolAndFetchedAtBetweenOrderByFetchedAtDescIdDesc(
+                        symbol, period.from(), period.to())
+                .orElseThrow(() -> notFound(symbol, period));
     }
 
     private static PriceRecordNotFoundException notFound(String symbol, TimePeriod period) {
