@@ -1,5 +1,7 @@
 # Binance Price Service
 
+[![CI](https://github.com/vylegzhaninn/binance-price-service/actions/workflows/ci.yml/badge.svg)](https://github.com/vylegzhaninn/binance-price-service/actions/workflows/ci.yml)
+
 Сервис по расписанию забирает среднюю цену торговой пары (по умолчанию **BNBUSDT**) с биржи
 Binance ([GET /api/v3/avgPrice](https://developers.binance.com/docs/binance-spot-api-docs/rest-reference/market-data-endpoints)),
 сохраняет её в PostgreSQL и отдаёт через REST API.
@@ -158,7 +160,10 @@ mvn verify
   `BinanceClient` (MockRestServiceServer), `PriceFetchScheduler`.
 - Integration (`PriceApiIntegrationTest`): реальный PostgreSQL в Testcontainers + Binance,
   подменённый WireMock; проверены все 4 эндпоинта, формат `fetchedAt`, пагинация, тренды,
-  404/400 и сценарий «Binance ответил 429 — данных не потеряли и не задублировали».
+  404/400/405 и сценарий «Binance ответил 429 — данных не потеряли и не задублировали».
+
+CI (GitHub Actions) запускает `mvn verify` на каждый push/PR — Docker на раннерах
+доступен из коробки, поэтому Testcontainers-тесты работают и там.
 
 ## Решения и компромиссы
 
