@@ -5,8 +5,6 @@ import com.example.price.domain.PriceRecord;
 import com.example.price.service.PriceIngestionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,12 +21,6 @@ public class PriceFetchScheduler {
 
     public PriceFetchScheduler(PriceIngestionService ingestionService) {
         this.ingestionService = ingestionService;
-    }
-
-    /** One poll right after startup so the API serves fresh data without waiting for the first delay. */
-    @EventListener(ApplicationReadyEvent.class)
-    public void fetchOnStartup() {
-        fetchAndStorePrice();
     }
 
     public void fetchAndStorePrice() {
