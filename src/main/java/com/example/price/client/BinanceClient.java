@@ -48,9 +48,11 @@ public class BinanceClient {
             }
             return response;
         } catch (ResourceAccessException e) {
-            throw new BinanceApiException("I/O error calling Binance " + AVG_PRICE_PATH + " for symbol " + symbol, e);
+            throw new BinanceApiException(
+                    "I/O error calling Binance " + AVG_PRICE_PATH + " for symbol " + symbol, e);
         } catch (RestClientException e) {
-            throw new BinanceApiException("Failed to read Binance " + AVG_PRICE_PATH + " response for symbol " + symbol, e);
+            throw new BinanceApiException(
+                    "Failed to read Binance " + AVG_PRICE_PATH + " response for symbol " + symbol, e);
         }
     }
 

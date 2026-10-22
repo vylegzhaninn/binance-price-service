@@ -50,7 +50,7 @@ class PriceApiIntegrationTest {
     private static final ObjectMapper JSON = new ObjectMapper()
             .configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true);
 
-    private static final WireMockServer binanceMock = new WireMockServer(
+    private static final WireMockServer BINANCE_MOCK = new WireMockServer(
             WireMockConfiguration.options().dynamicPort());
 
     @Container
@@ -59,15 +59,15 @@ class PriceApiIntegrationTest {
 
     @DynamicPropertySource
     static void binanceProperties(DynamicPropertyRegistry registry) {
-        if (!binanceMock.isRunning()) {
-            binanceMock.start();
+        if (!BINANCE_MOCK.isRunning()) {
+            BINANCE_MOCK.start();
         }
-        registry.add("binance.base-url", binanceMock::baseUrl);
+        registry.add("binance.base-url", BINANCE_MOCK::baseUrl);
     }
 
     @AfterAll
     static void stopBinanceMock() {
-        binanceMock.stop();
+        BINANCE_MOCK.stop();
     }
 
     @Autowired
@@ -82,7 +82,7 @@ class PriceApiIntegrationTest {
     @BeforeEach
     void cleanState() {
         repository.deleteAll();
-        binanceMock.resetAll();
+        BINANCE_MOCK.resetAll();
     }
 
     @Test
@@ -179,7 +179,7 @@ class PriceApiIntegrationTest {
     @Test
     @DisplayName("a failed Binance call is skipped: no exception, no data loss or duplication")
     void failedPollKeepsDataIntact() {
-        binanceMock.stubFor(get(urlPathEqualTo("/api/v3/avgPrice"))
+        BINANCE_MOCK.stubFor(get(urlPathEqualTo("/api/v3/avgPrice"))
                 .willReturn(aResponse().withStatus(429)
                         .withHeader("Content-Type", "application/json")
                         .withBody("{\"code\":-1003,\"msg\":\"Too much request weight used\"}")));
@@ -232,7 +232,7 @@ class PriceApiIntegrationTest {
     }
 
     private void stubAvgPrice(String price) {
-        binanceMock.stubFor(get(urlPathEqualTo("/api/v3/avgPrice"))
+        BINANCE_MOCK.stubFor(get(urlPathEqualTo("/api/v3/avgPrice"))
                 .willReturn(okJson("{\"mins\":5,\"price\":\"%s\",\"closeTime\":1694061154503}"
                         .formatted(price))));
     }
