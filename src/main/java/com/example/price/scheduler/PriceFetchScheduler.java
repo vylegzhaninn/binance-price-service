@@ -34,7 +34,7 @@ public class PriceFetchScheduler {
     public void fetchAndStorePrice() {
         try {
             PriceRecord saved = ingestionService.fetchAndSaveAveragePrice();
-            log.debug("Stored price record: symbol={}, price={}, fetchedAt={}",
+            log.info("Stored price record: symbol={}, price={}, fetchedAt={}",
                     saved.getSymbol(), saved.getPrice(), saved.getFetchedAt());
         } catch (BinanceApiException e) {
             log.warn("Binance poll failed, will retry on next schedule: {}", e.getMessage());

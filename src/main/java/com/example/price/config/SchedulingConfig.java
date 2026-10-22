@@ -1,6 +1,8 @@
 package com.example.price.config;
 
 import com.example.price.scheduler.PriceFetchScheduler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
@@ -16,6 +18,8 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 @EnableScheduling
 public class SchedulingConfig implements SchedulingConfigurer {
 
+    private static final Logger log = LoggerFactory.getLogger(SchedulingConfig.class);
+
     private final BinanceProperties properties;
     private final PriceFetchScheduler priceFetchScheduler;
 
@@ -26,6 +30,8 @@ public class SchedulingConfig implements SchedulingConfigurer {
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar registrar) {
+        log.info("Scheduling Binance poll with fixed delay {} for symbol {}",
+                properties.pollInterval(), properties.symbol());
         registrar.addFixedDelayTask(priceFetchScheduler::fetchAndStorePrice, properties.pollInterval());
     }
 }

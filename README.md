@@ -102,6 +102,14 @@ curl 'http://localhost:8080/api/v1/prices/trend?from=2026-10-01T00:00:00Z&to=202
 - `400` — некорректные параметры (from > to, неверный формат даты, size > 100);
 - `500` — непредвиденная ошибка.
 
+### Логирование
+
+- каждая успешная выборка Binance — `Stored price record: symbol=..., price=..., fetchedAt=...` (INFO);
+- каждый HTTP-запрос — `GET /api/v1/prices/latest -> 200 (3 ms)` (INFO);
+- сбой Binance — WARN (`Binance poll failed...`), непредвиденные ошибки — ERROR;
+- при старте пишется конфигурация опроса: интервал и символ.
+
+
 ## Архитектура
 
 ```

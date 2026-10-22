@@ -23,13 +23,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(PriceRecordNotFoundException.class)
     ProblemDetail handleNotFound(PriceRecordNotFoundException e) {
-        log.debug("Request for missing data: {}", e.getMessage());
+        log.info("Not found: {}", e.getMessage());
         return problem(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
     @ExceptionHandler(InvalidPeriodException.class)
     ProblemDetail handleInvalidPeriod(InvalidPeriodException e) {
-        log.debug("Invalid period requested: {}", e.getMessage());
+        log.info("Invalid period requested: {}", e.getMessage());
         return problem(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
             MethodArgumentTypeMismatchException.class,
             ConstraintViolationException.class})
     ProblemDetail handleBadRequest(Exception e) {
-        log.debug("Bad request: {}", e.getMessage());
+        log.info("Bad request: {}", e.getMessage());
         return problem(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
