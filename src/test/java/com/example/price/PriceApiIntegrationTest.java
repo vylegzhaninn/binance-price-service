@@ -215,6 +215,22 @@ class PriceApiIntegrationTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
+    @Test
+    @DisplayName("unknown path gives 404, not 500")
+    void unknownPathGives404() {
+        ResponseEntity<String> response = rest.getForEntity("/api/v1/unknown", String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("unsupported method gives 405, not 500")
+    void wrongMethodGives405() {
+        ResponseEntity<String> response = rest.postForEntity("/api/v1/prices/latest", null, String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
     private void stubAvgPrice(String price) {
         binanceMock.stubFor(get(urlPathEqualTo("/api/v3/avgPrice"))
                 .willReturn(okJson("{\"mins\":5,\"price\":\"%s\",\"closeTime\":1694061154503}"
