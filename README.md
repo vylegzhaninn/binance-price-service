@@ -109,6 +109,11 @@ curl 'http://localhost:8080/api/v1/prices/trend?from=2026-10-01T00:00:00Z&to=202
 - сбой Binance — WARN (`Binance poll failed...`), непредвиденные ошибки — ERROR;
 - при старте пишется конфигурация опроса: интервал и символ.
 
+## Swagger
+
+Интерактивная документация (springdoc-openapi): **http://localhost:8080/swagger-ui.html**,
+спецификация OpenAPI 3 — http://localhost:8080/v3/api-docs.
+
 
 ## Архитектура
 
