@@ -16,6 +16,12 @@ server:
   port: ${SERVER_PORT:8080}
   shutdown: graceful
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
 binance:
   base-url: ${BINANCE_BASE_URL:https://api.binance.com}
   symbol: ${BINANCE_SYMBOL:BNBUSDT}

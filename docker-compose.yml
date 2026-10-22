@@ -15,6 +15,12 @@ services:
       BINANCE_BASE_URL: ${BINANCE_BASE_URL:-https://api.binance.com}
     ports:
       - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+      start_period: 15s
 
   postgres:
     image: postgres:16-alpine

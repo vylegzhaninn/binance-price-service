@@ -15,7 +15,9 @@ RUN java -Djarmode=tools -jar application.jar extract --layers --launcher --dest
 # 3. Runtime image, non-root user
 FROM eclipse-temurin:17-jre
 WORKDIR /app
-RUN useradd --system --uid 1001 spring
+RUN apt-get update && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && useradd --system --uid 1001 spring
 COPY --from=layers /workspace/extracted/dependencies/ ./
 COPY --from=layers /workspace/extracted/spring-boot-loader/ ./
 COPY --from=layers /workspace/extracted/snapshot-dependencies/ ./

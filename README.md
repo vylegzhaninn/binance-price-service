@@ -6,7 +6,7 @@ Binance ([GET /api/v3/avgPrice](https://developers.binance.com/docs/binance-spot
 
 ## Стек
 
-- Java 17, Spring Boot 3.5 (Web, Data JPA, Validation)
+- Java 17, Spring Boot 3.5 (Web, Data JPA, Validation, Actuator)
 - PostgreSQL 16 + Flyway (миграции схемы)
 - RestClient (JDK HttpClient) для вызовов Binance
 - Тесты: JUnit 5, Mockito, MockRestServiceServer, Testcontainers, WireMock
@@ -22,6 +22,8 @@ docker compose up --build -d
 
 Поднимаются два сервиса: `app` (порт 8080) и `postgres`. Первая выборка цены выполняется
 сразу после старта, далее — каждые `BINANCE_POLL_INTERVAL` (по умолчанию PT30S).
+
+Health-check приложения: `GET /actuator/health` (используется healthcheck'ом в compose).
 
 ### Локально
 
@@ -105,7 +107,7 @@ curl 'http://localhost:8080/api/v1/prices/trend?from=2026-10-01T00:00:00Z&to=202
 ### Логирование
 
 - каждая успешная выборка Binance — `Stored price record: symbol=..., price=..., fetchedAt=...` (INFO);
-- каждый HTTP-запрос — `GET /api/v1/prices/latest -> 200 (3 ms)` (INFO);
+- каждый HTTP-запрос бизнес-API — `GET /api/v1/prices/latest -> 200 (3 ms)` (INFO; служебные пути `/actuator`, `/swagger-ui` не логируются);
 - сбой Binance — WARN (`Binance poll failed...`), непредвиденные ошибки — ERROR;
 - при старте пишется конфигурация опроса: интервал и символ.
 
