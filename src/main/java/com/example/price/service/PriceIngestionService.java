@@ -9,13 +9,13 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Write side of the service: fetches the average price once and stores exactly
- * one record per successful call. A failed call writes nothing, so the DB never
- * gets duplicated or half-written data; the next successful poll simply adds the
- * next row.
+ * one record per successful call. The insert relies on the repository's own
+ * transaction, so no pooled connection is held during the Binance HTTP call.
+ * A failed call writes nothing, so the DB never gets duplicated or half-written
+ * data; the next successful poll simply adds the next row.
  */
 @Service
 public class PriceIngestionService {
@@ -35,7 +35,6 @@ public class PriceIngestionService {
         this.clock = clock;
     }
 
-    @Transactional
     public PriceRecord fetchAndSaveAveragePrice() {
         BinanceAvgPrice avgPrice = binanceClient.fetchAveragePrice(properties.symbol());
         PriceRecord record = new PriceRecord(
