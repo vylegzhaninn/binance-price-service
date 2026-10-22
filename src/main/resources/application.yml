@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: binance-price-service
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:prices}
+    username: ${DB_USER:prices}
+    password: ${DB_PASSWORD:prices}
+  jpa:
+    hibernate:
+      ddl-auto: none # schema is owned by Flyway
+    open-in-view: false
+  lifecycle:
+    timeout-per-shutdown-phase: 10s
+
+server:
+  port: ${SERVER_PORT:8080}
+  shutdown: graceful
+
+binance:
+  base-url: ${BINANCE_BASE_URL:https://api.binance.com}
+  symbol: ${BINANCE_SYMBOL:BNBUSDT}
+  poll-interval: ${BINANCE_POLL_INTERVAL:PT30S}
+
+logging:
+  level:
+    com.example.price: info
